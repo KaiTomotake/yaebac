@@ -1,4 +1,4 @@
-use yaebac::prelude::*;
+use yaebac::parser::Parser;
 use yaebac::primitive::{lit, re};
 
 #[test]
