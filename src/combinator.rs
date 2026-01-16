@@ -120,3 +120,29 @@ impl Parser for NoSkip {
         })
     }
 }
+
+#[derive(Debug)]
+pub struct Rule<P: Parser> {
+    pub(crate) name: String,
+    pub(crate) parser: P,
+}
+
+impl<P: Parser> Parser for Rule<P> {
+    fn parse_with_locate<S: Parser>(
+        &self,
+        src: &str,
+        locate: usize,
+        skip: &Option<S>,
+    ) -> Result<Output, ParseError> {
+        self.parser
+            .parse_with_locate(src, locate, skip)
+            .map_err(|_| ParseError {
+                rule: self.name.clone(),
+                locate,
+            })
+            .map(|out| Output {
+                parsed: out.parsed,
+                locate: skipper(src, out.locate, skip),
+            })
+    }
+}

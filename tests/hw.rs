@@ -12,3 +12,15 @@ fn hello_world() {
             .parse("Hello, World!", Some(re("\\s+").unwrap()))
     );
 }
+
+#[test]
+#[allow(unused_must_use)]
+fn hw_with_rule() {
+    let hello_rule = lit("Hello").then(lit(",")).into_rule("hello");
+    let world_rule = lit("World").then(lit("!")).into_rule("world");
+    dbg!(
+        hello_rule
+            .then(world_rule)
+            .parse("Hello, World!", Some(re("\\s+").unwrap()))
+    );
+}
