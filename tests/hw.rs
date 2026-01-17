@@ -24,3 +24,13 @@ fn hw_with_rule() {
             .parse("Hello, World!", Some(re("\\s+").unwrap()))
     );
 }
+
+#[test]
+#[allow(unused_must_use)]
+fn hw_repeated() {
+    let hw_rule = lit("Hello, World!").into_rule("hw");
+    dbg!(hw_rule.repeated().parse(
+        "Hello, World! Hello, World!Hello, World!",
+        Some(re("\\s+").unwrap())
+    ));
+}

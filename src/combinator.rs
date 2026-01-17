@@ -146,3 +146,27 @@ impl<P: Parser> Parser for Rule<P> {
             })
     }
 }
+
+#[derive(Debug)]
+pub struct Repeat<P: Parser> {
+    pub(crate) parser: P,
+}
+
+impl<P: Parser> Parser for Repeat<P> {
+    fn parse_with_locate<S: Parser>(
+        &self,
+        src: &str,
+        mut locate: usize,
+        skip: &Option<S>,
+    ) -> Result<Output, ParseError> {
+        let mut outs = Vec::new();
+        while let Ok(o) = self.parser.parse_with_locate(src, locate, skip) {
+            outs.extend(o.parsed);
+            locate = o.locate;
+        }
+        Ok(Output {
+            parsed: outs,
+            locate,
+        })
+    }
+}

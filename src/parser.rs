@@ -1,4 +1,4 @@
-use crate::combinator::{Then, Rule, skipper};
+use crate::combinator::{Repeat, Rule, Then, skipper};
 
 pub trait Parser: Sized {
     fn parse<S: Parser>(&self, src: &str, skip: Option<S>) -> Result<Vec<String>, ParseError> {
@@ -24,8 +24,12 @@ pub trait Parser: Sized {
     fn into_rule(self, name: &str) -> Rule<Self> {
         Rule {
             name: name.to_string(),
-            parser: self
+            parser: self,
         }
+    }
+
+    fn repeated(self) -> Repeat<Self> {
+        Repeat { parser: self }
     }
 }
 
