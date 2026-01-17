@@ -166,7 +166,7 @@ impl<P: Parser> Parser for Repeat<P> {
         }
         Ok(Output {
             parsed: outs,
-            locate,
+            locate: skipper(src, locate, skip),
         })
     }
 }
