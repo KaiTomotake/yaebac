@@ -34,3 +34,19 @@ fn hw_repeated() {
         Some(re("\\s+").unwrap())
     ));
 }
+
+#[test]
+#[allow(unused_must_use)]
+fn hw_eoi_checked() {
+    let hw_rule = lit("Hello, World!").into_rule("hw");
+    assert!(
+        hw_rule
+            .repeated()
+            .eoi()
+            .parse(
+                "Hello, World! Hello, World!Hello, Warld!",
+                Some(re("\\s+").unwrap())
+            )
+            .is_err()
+    );
+}

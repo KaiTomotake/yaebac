@@ -170,3 +170,29 @@ impl<P: Parser> Parser for Repeat<P> {
         })
     }
 }
+
+#[derive(Debug)]
+pub struct Eoi<P: Parser> {
+    pub(crate) parser: P,
+}
+
+impl<P: Parser> Parser for Eoi<P> {
+    fn parse_with_locate<S: Parser>(
+        &self,
+        src: &str,
+        locate: usize,
+        skip: &Option<S>,
+    ) -> Result<Output, ParseError> {
+        let out = self.parser.parse_with_locate(src, locate, skip)?;
+        if out.locate != src.len() {
+            return Err(ParseError {
+                rule: "eoi".to_string(),
+                locate: out.locate,
+            });
+        }
+        Ok(Output {
+            parsed: out.parsed,
+            locate: skipper(src, out.locate, skip),
+        })
+    }
+}
