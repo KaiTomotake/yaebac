@@ -36,7 +36,6 @@ fn hw_repeated() {
 }
 
 #[test]
-#[allow(unused_must_use)]
 fn hw_eoi_checked() {
     let hw_rule = lit("Hello, World!").into_rule("hw");
     assert!(
