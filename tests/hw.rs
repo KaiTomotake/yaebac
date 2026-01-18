@@ -49,3 +49,12 @@ fn hw_eoi_checked() {
             .is_err()
     );
 }
+
+#[test]
+fn hw_opt() {
+    let h_rule = lit("Hello").opt().into_rule("hello");
+    assert_eq!(
+        h_rule.then(lit("World")).parse("World", Some(re("\\s+").unwrap())).unwrap(),
+        &["World".to_string()]
+    );
+}

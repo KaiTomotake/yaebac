@@ -1,4 +1,4 @@
-use crate::combinator::{Repeat, Rule, Then, Eoi, skipper};
+use crate::combinator::{Repeat, Rule, Then, Eoi, Opt, skipper};
 
 pub trait Parser: Sized {
     fn parse<S: Parser>(&self, src: &str, skip: Option<S>) -> Result<Vec<String>, ParseError> {
@@ -34,6 +34,12 @@ pub trait Parser: Sized {
 
     fn eoi(self) -> Eoi<Self> {
         Eoi {
+            parser: self
+        }
+    }
+
+    fn opt(self) -> Opt<Self> {
+        Opt {
             parser: self
         }
     }

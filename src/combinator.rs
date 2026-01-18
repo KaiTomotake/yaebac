@@ -196,3 +196,29 @@ impl<P: Parser> Parser for Eoi<P> {
         })
     }
 }
+
+#[derive(Debug)]
+pub struct Opt<P: Parser> {
+    pub(crate) parser: P
+}
+
+impl<P: Parser> Parser for Opt<P> {
+    fn parse_with_locate<S: Parser>(
+        &self,
+        src: &str,
+        locate: usize,
+        skip: &Option<S>,
+    ) -> Result<Output, ParseError> {
+        if let Ok(o) = self.parser.parse_with_locate(src, locate, skip) {
+            return Ok(Output {
+                parsed: o.parsed,
+                locate: skipper(src, o.locate, skip)
+            })
+        } else {
+            Ok(Output {
+                parsed: Vec::new(),
+                locate: skipper(src, locate, skip)
+            })
+        }
+    }
+}
