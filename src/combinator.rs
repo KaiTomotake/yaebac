@@ -64,7 +64,7 @@ impl<A: Parser, B: Parser> Parser for Then<A, B> {
             .parse_with_locate(src, output_a.locate, skip)?;
         Ok(Output {
             parsed: output_a.parsed.into_iter().chain(output_b.parsed).collect(),
-            locate: skipper(src, output_b.locate, skip),
+            locate: output_b.locate,
         })
     }
 }
@@ -140,10 +140,6 @@ impl<P: Parser> Parser for Rule<P> {
                 rule: self.name.clone(),
                 locate,
             })
-            .map(|out| Output {
-                parsed: out.parsed,
-                locate: skipper(src, out.locate, skip),
-            })
     }
 }
 
@@ -166,7 +162,7 @@ impl<P: Parser> Parser for Repeat<P> {
         }
         Ok(Output {
             parsed: outs,
-            locate: skipper(src, locate, skip),
+            locate
         })
     }
 }
@@ -217,7 +213,7 @@ impl<P: Parser> Parser for Opt<P> {
         } else {
             Ok(Output {
                 parsed: Vec::new(),
-                locate: skipper(src, locate, skip)
+                locate
             })
         }
     }
@@ -237,15 +233,9 @@ impl<A: Parser, B: Parser> Parser for Or<A, B> {
         skip: &Option<S>,
     ) -> Result<Output, ParseError> {
         if let Ok(out) = self.parser_a.parse_with_locate(src, locate, skip)  {
-            return Ok(Output {
-                parsed: out.parsed,
-                locate: skipper(src, out.locate, skip)
-            })
+            return Ok(out)
         } else if let Ok(out) = self.parser_b.parse_with_locate(src, locate, skip) {
-            return Ok(Output {
-                parsed: out.parsed,
-                locate: skipper(src, out.locate, skip)
-            })
+            return Ok(out)
         }
         Err(ParseError {
             rule: "or".to_string(),
