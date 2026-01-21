@@ -1,5 +1,6 @@
 use yaebac::parser::Parser;
 use yaebac::primitive::{lit, re};
+use yaebac::combinator::NoSkip;
 
 #[test]
 #[allow(unused_must_use)]
@@ -57,4 +58,11 @@ fn hw_opt() {
         h_rule.then(lit("World")).parse("World", Some(re("\\s+").unwrap())).unwrap(),
         &["World".to_string()]
     );
+}
+
+#[test]
+fn hw_or() {
+    assert!(
+        lit("Hello").or(lit("World")).parse::<NoSkip>("World", None).is_ok()
+    )
 }

@@ -222,3 +222,34 @@ impl<P: Parser> Parser for Opt<P> {
         }
     }
 }
+
+#[derive(Debug)]
+pub struct Or<A: Parser, B: Parser> {
+    pub(crate) parser_a: A,
+    pub(crate) parser_b: B
+}
+
+impl<A: Parser, B: Parser> Parser for Or<A, B> {
+    fn parse_with_locate<S: Parser>(
+        &self,
+        src: &str,
+        locate: usize,
+        skip: &Option<S>,
+    ) -> Result<Output, ParseError> {
+        if let Ok(out) = self.parser_a.parse_with_locate(src, locate, skip)  {
+            return Ok(Output {
+                parsed: out.parsed,
+                locate: skipper(src, out.locate, skip)
+            })
+        } else if let Ok(out) = self.parser_b.parse_with_locate(src, locate, skip) {
+            return Ok(Output {
+                parsed: out.parsed,
+                locate: skipper(src, out.locate, skip)
+            })
+        }
+        Err(ParseError {
+            rule: "or".to_string(),
+            locate
+        })
+    }
+}
