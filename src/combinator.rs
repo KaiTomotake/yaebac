@@ -234,12 +234,7 @@ impl<A: Parser, B: Parser> Parser for Or<A, B> {
     ) -> Result<Output, ParseError> {
         if let Ok(out) = self.parser_a.parse_with_locate(src, locate, skip)  {
             return Ok(out)
-        } else if let Ok(out) = self.parser_b.parse_with_locate(src, locate, skip) {
-            return Ok(out)
         }
-        Err(ParseError {
-            rule: "or".to_string(),
-            locate
-        })
+        self.parser_b.parse_with_locate(src, locate, skip)
     }
 }
