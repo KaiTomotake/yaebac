@@ -1,4 +1,4 @@
-use crate::combinator::{Repeat, Rule, Then, Eoi, Opt, Or, skipper};
+use crate::combinator::{Eoi, Opt, Or, Repeat, Rule, Then, skipper};
 
 pub trait Parser: Sized {
     fn parse<S: Parser>(&self, src: &str, skip: Option<S>) -> Result<Vec<String>, ParseError> {
@@ -33,21 +33,17 @@ pub trait Parser: Sized {
     }
 
     fn eoi(self) -> Eoi<Self> {
-        Eoi {
-            parser: self
-        }
+        Eoi { parser: self }
     }
 
     fn opt(self) -> Opt<Self> {
-        Opt {
-            parser: self
-        }
+        Opt { parser: self }
     }
 
     fn or<P: Parser>(self, parser: P) -> Or<Self, P> {
         Or {
             parser_a: self,
-            parser_b: parser
+            parser_b: parser,
         }
     }
 }

@@ -162,7 +162,7 @@ impl<P: Parser> Parser for Repeat<P> {
         }
         Ok(Output {
             parsed: outs,
-            locate
+            locate,
         })
     }
 }
@@ -195,7 +195,7 @@ impl<P: Parser> Parser for Eoi<P> {
 
 #[derive(Debug)]
 pub struct Opt<P: Parser> {
-    pub(crate) parser: P
+    pub(crate) parser: P,
 }
 
 impl<P: Parser> Parser for Opt<P> {
@@ -208,12 +208,12 @@ impl<P: Parser> Parser for Opt<P> {
         if let Ok(o) = self.parser.parse_with_locate(src, locate, skip) {
             return Ok(Output {
                 parsed: o.parsed,
-                locate: skipper(src, o.locate, skip)
-            })
+                locate: skipper(src, o.locate, skip),
+            });
         } else {
             Ok(Output {
                 parsed: Vec::new(),
-                locate
+                locate,
             })
         }
     }
@@ -222,7 +222,7 @@ impl<P: Parser> Parser for Opt<P> {
 #[derive(Debug)]
 pub struct Or<A: Parser, B: Parser> {
     pub(crate) parser_a: A,
-    pub(crate) parser_b: B
+    pub(crate) parser_b: B,
 }
 
 impl<A: Parser, B: Parser> Parser for Or<A, B> {
@@ -232,8 +232,8 @@ impl<A: Parser, B: Parser> Parser for Or<A, B> {
         locate: usize,
         skip: &Option<S>,
     ) -> Result<Output, ParseError> {
-        if let Ok(out) = self.parser_a.parse_with_locate(src, locate, skip)  {
-            return Ok(out)
+        if let Ok(out) = self.parser_a.parse_with_locate(src, locate, skip) {
+            return Ok(out);
         }
         self.parser_b.parse_with_locate(src, locate, skip)
     }
