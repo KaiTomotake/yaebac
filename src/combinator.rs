@@ -238,3 +238,32 @@ impl<A: Parser, B: Parser> Parser for Or<A, B> {
         self.parser_b.parse_with_locate(src, locate, skip)
     }
 }
+
+#[derive(Debug)]
+pub struct Map<P, F>
+where
+    P: Parser,
+    F: FnOnce(Vec<String>) -> Vec<String>,
+{
+    pub(crate) parser: P,
+    pub(crate) func: F,
+}
+
+impl<P, F> Parser for Map<P, F>
+where
+    P: Parser,
+    F: Fn(Vec<String>) -> Vec<String>,
+{
+    fn parse_with_locate<S: Parser>(
+        &self,
+        src: &str,
+        locate: usize,
+        skip: &Option<S>,
+    ) -> Result<Output, ParseError> {
+        let out = self.parser.parse_with_locate(src, locate, skip)?;
+        Ok(Output {
+            parsed: (self.func)(out.parsed),
+            locate: out.locate,
+        })
+    }
+}
